@@ -1,28 +1,33 @@
-version: 2.1
-
-orbs:
-  python: circleci/python@0.2.1
-
+version: 2
 jobs:
-  build-and-test:
-    executor: python/default
-    steps:
-      - checkout
-      - python/load-cache
-      - run:
-          command: |
-           python3 -m venv venv
-           . venv/bin/activate
-           make install
-          name: Install dependencies
-      - python/save-cache
-      - run:
-          command: |
-           . venv/bin/activate
-           make lint
-          name: run lint
-
-workflows:
-  main:
-    jobs:
-      - build-and-test
+ build:
+  docker:
+   - image: circleci/python:3.6.1
+   
+  working_director: ~/repo
+  
+  steps:
+   - checkout
+   
+   -restore_cache:
+    keys:
+     - v1-dependencies-{{ checksum "requirements.txt" }}
+     - v1-dependencies-
+    
+    - run:
+     name: install dependencies
+     command: |
+      python3 -m venv venv
+      . venv/bin/activate
+      make install
+      
+     - save_cache:
+      paths:
+       - ./venv
+      key: v1-dependencies-{{ checksum "requirements.txt" }}
+      
+     - run:
+      name: run tests
+      command: |
+       . venv/bin/activate
+       make lint
