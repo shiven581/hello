@@ -12,10 +12,17 @@ jobs:
       - python/install-deps
       - python/save-cache
       - run:
-          command: ./hello.py test
-          name: Test
+          command: |
+            python 3 -m venv venv
+            . venv/bin/activate
+            make install
+          name: install
 
 workflows:
   main:
     jobs:
-      - make lint
+      - run:
+        command: |
+          make lint
+        name: test
+        
