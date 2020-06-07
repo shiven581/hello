@@ -7,13 +7,8 @@ jobs:
   working_director: ~/repo
   
   steps:
-   - checkout
-   
-   # Download and cache dependencies
-   - restore_cache:
-    keys:
-     - v1-dependencies-{{ checksum "requirements.txt" }}
-     - v1-dependencies-
+      - checkout
+      - python/load-cache
     
     - run:
      name: install dependencies
